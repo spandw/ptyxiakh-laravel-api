@@ -11,7 +11,6 @@ class Reservation extends Model
     use HasFactory;
 
     protected $fillable = [
-        "user_id",
         "start_date",
         "end_date"
     ];
@@ -24,11 +23,11 @@ class Reservation extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function parkingSpot()
     {
-        return $this->belongsTo(ParkingSpot::class, 'parking_spot_id');
+        return $this->belongsTo(ParkingSpot::class);
     }
 }

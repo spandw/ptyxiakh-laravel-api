@@ -19,11 +19,10 @@ class ApiLoginController extends Controller
             'name' => ['required', 'string'],
             'lastName' => ['required', 'string'],
             'email' => ['required', 'email', 'string'],
-            'parkingSpots' => ['required', 'integer', 'min:0'],
             'password' => [
                 'required',
                 'confirmed',
-                Password::min(8)->mixedCase()->numbers()->symbols()
+                //Password::min(8)->mixedCase()->numbers()->symbols()
             ]
         ]);
 
@@ -32,7 +31,6 @@ class ApiLoginController extends Controller
             'name' => $data['name'],
             'last_name' => $data['lastName'],
             'email' => $data['email'],
-            'parking_spots' => $data['parkingSpots'],
             'password' => bcrypt($data['password'])
         ]);
         $token = $user->createToken('myapptoken')->plainTextToken;
@@ -89,7 +87,7 @@ class ApiLoginController extends Controller
                 'message' => 'You are not Logged In'
             ], 401);
         }
-
+        $user->loadCount('parkingSpots');
         return response()->json($user);
     }
 

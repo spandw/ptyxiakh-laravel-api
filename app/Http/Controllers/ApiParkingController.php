@@ -25,33 +25,37 @@ class ApiParkingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    
+
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'city' => ['required','string'],
-            'address' => ['required','string'],
-            'postal_code' => ['required','integer','min:0'],
-            'vehicle_type' => 'in:motorbike,car,suv,truck',
-            
+            'city' => ['required', 'string'],
+            'address' => ['required', 'string'],
+            'title' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'type' => 'in:motorbike,car,suv,truck',
+
         ]);
-        
+
         $parkingSpot = ParkingSpot::create([
-            
+
             'city' => $data['city'],
             'address' => $data['address'],
-            'postal_code' => $data['postal_code'],
-            'vehicle_type' => $data['vehicle_type'],
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'price' => $data['price'],
+            'vehicle_type' => $data['type'],
             'user_id' => $request->user()->id
         ]);
         //$token = $user->createToken('main')->plainTextToken;
-        
+
         return response()->json([
-            'message'=>'Created Spot succefully',
+            'message' => 'Created Spot succefully',
             'parking_spot' => $parkingSpot
 
-        ],200);
+        ], 200);
     }
 
     /**
@@ -73,14 +77,15 @@ class ApiParkingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {   
-        
+    {
+
         $data = $request->validate([
-            'city' => ['required','string'],
-            'address' => ['required','string'],
-            'postal_code' => ['required','integer','min:0'],
+            'city' => ['required', 'string'],
+            'address' => ['required', 'string'],
+            'title' => ['required', 'string'],
+            'description' => ['required', 'string'],
             'vehicle_type' => 'in:motorbike,car,suv,truck',
-            
+
         ]);
 
         $parkingSpot = ParkingSpot::find($id);
@@ -91,16 +96,16 @@ class ApiParkingController extends Controller
             ], 404);
         }
 
-        
-            $parkingSpot->city = $data['city'];
-            $parkingSpot->address = $data['address'];
-            $parkingSpot->postal_code = $data['postal_code'];
-            $parkingSpot->vehicle_type = $data['vehicle_type'];
-            $parkingSpot->save();
+        $parkingSpot->city = $data['city'];
+        $parkingSpot->address = $data['address'];
+        $parkingSpot->title = $data['title'];
+        $parkingSpot->description = $data['description'];
+        $parkingSpot->vehicle_type = $data['vehicle_type'];
+        $parkingSpot->save();
 
-            return response()->json([
-                'parking_spot' => $parkingSpot
-            ],200);
+        return response()->json([
+            'parking_spot' => $parkingSpot
+        ], 200);
     }
 
     /**
@@ -116,6 +121,28 @@ class ApiParkingController extends Controller
 
         return response()->json([
             'message' => "Parking Spot Was Deleted Successsfully!!"
-        ],200);
+        ], 200);
+    }
+
+    public function getAllParkingSpots()
+    {
+        $parkingSpots = ParkingSpot::all();
+        if (!$parkingSpots) {
+            return response()->json([
+                'message' => 'There are no parking spots yet'
+            ], 404);
+        }
+        return response()->json($parkingSpots, 200);
+    }
+
+    public function getDistinctCities()
+    {
+        $cities = ParkingSpot::distinct()->pluck('city');
+        if (!$cities) {
+            return response()->json([
+                'message' => 'There are no cities'
+            ], 404);
+        }
+        return response()->json($cities, 200);
     }
 }

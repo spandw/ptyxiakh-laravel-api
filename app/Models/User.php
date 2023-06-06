@@ -23,7 +23,6 @@ class User extends Authenticatable
         'name',
         'last_name',
         'username',
-        'parking_spots',
         'email',
         'password',
     ];
@@ -49,7 +48,7 @@ class User extends Authenticatable
 
     public function parkingSpots()
     {
-        return $this->hasMany(ParkingSpot::class, 'parking_spot_id');
+        return $this->hasMany(ParkingSpot::class);
     }
 
     public function reservations()

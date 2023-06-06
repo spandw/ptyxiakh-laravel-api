@@ -14,7 +14,9 @@ class ParkingSpot extends Model
         'user_id',
         'city',
         'address',
-        'postal_code',
+        'title',
+        'price',
+        'description',
         'vehicle_type'
     ];
 
@@ -23,13 +25,13 @@ class ParkingSpot extends Model
 
 
 
-    
+
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
     public function reservations()
     {
-        return $this->hasMany(Reservation::class, 'reservation_id');
+        return $this->hasMany(Reservation::class);
     }
 }

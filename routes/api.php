@@ -27,16 +27,21 @@ Route::post('/login', [ApiLoginController::class, 'authenticate']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    
+
     Route::post('/reservation', [ApiReservationsController::class, 'checkAvailabilityAndMakeReservation']);
-    
-    
+
+
     Route::post('/create-spot', [ApiParkingController::class, 'store']);
     Route::post('/update-spot/{id}', [ApiParkingController::class, 'update']);
-    Route::post('/delete-spot/{id}', [ApiParkingController::class, 'destroy']);
+    Route::delete('/delete-spot/{id}', [ApiParkingController::class, 'destroy']);
+    Route::get('/cities', [ApiParkingController::class, 'getDistinctCities']);
+    Route::get('/parking-spots', [ApiParkingController::class, 'getAllParkingSpots']);
+    Route::get('/parking-spots/{id}', [ApiUserController::class, 'getUserParkingSpots']);
 
     Route::get('/user/{id}', [ApiUserController::class, 'getUserById']);
     Route::get('/users', [ApiUserController::class, 'getAllUsers']);
+
+
     Route::get('/user', [ApiLoginController::class, 'getCurrentUser']);
     Route::post('/logout', [ApiLoginController::class, 'logout']);
 });

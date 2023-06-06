@@ -13,14 +13,16 @@ class CreateParkingSpotsTable extends Migration
      */
     public function up()
     {
-        
+
         Schema::create('parking_spots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('city');
             $table->string('address');
-            $table->integer('postal_code');
-            $table->enum('vehicle_type',['motorbike','car','suv','truck']);
+            $table->string('title');
+            $table->string('description');
+            $table->integer('price');
+            $table->enum('vehicle_type', ['motorbike', 'car', 'suv', 'truck']);
             $table->timestamps();
         });
     }
