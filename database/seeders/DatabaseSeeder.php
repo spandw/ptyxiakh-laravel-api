@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         \App\Models\ParkingSpot::factory(10)->create();
+         \App\Models\ParkingSpot::factory(25)->create();
+         //\App\Models\Reservation::factory(10)->create();
     }
 }

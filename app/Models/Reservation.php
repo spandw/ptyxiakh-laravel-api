@@ -11,6 +11,8 @@ class Reservation extends Model
     use HasFactory;
 
     protected $fillable = [
+        "user_id",
+        "parking_spot_id",
         "start_date",
         "end_date"
     ];

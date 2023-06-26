@@ -18,20 +18,16 @@ class ApiReservationsController extends Controller
 
     public function checkAvailabilityAndMakeReservation(Request $request)
     {
-        $start_date = '2023-03-23';
-        $end_date = '2023-03-24';
+        $start_date = Carbon::createFromFormat('d-m-Y', $request->start_date);
+        $end_date = Carbon::createFromFormat('d-m-Y', $request->end_date);
 
-        $available_spots = DB::table('parking_spots')
-            ->whereNotIn('id', function ($query) use ($start_date, $end_date) {
-                $query->select('parking_spot_id')
-                    ->from('reservations')
-                    ->where('start_date', '<=', $end_date)
-                    ->where('end_date', '>=', $start_date);
-            })
+        $available_spots = Reservation::query()
+            ->whereDate('start_date', '>=', $start_date)
+            ->whereDate('end_date', '<=', $end_date)
             ->get();
 
         return response()->json([
-            'message' => "Available Parking spots",
+            'message' => "Available Parking spots", 
             'available_spots' => $available_spots
         ], 200);
     }

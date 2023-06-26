@@ -28,9 +28,9 @@ Route::post('/login', [ApiLoginController::class, 'authenticate']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+
+
     Route::post('/reservation', [ApiReservationsController::class, 'checkAvailabilityAndMakeReservation']);
-
-
     Route::post('/create-spot', [ApiParkingController::class, 'store']);
     Route::post('/update-spot/{id}', [ApiParkingController::class, 'update']);
     Route::delete('/delete-spot/{id}', [ApiParkingController::class, 'destroy']);
