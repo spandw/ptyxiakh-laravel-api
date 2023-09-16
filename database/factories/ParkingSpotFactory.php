@@ -15,13 +15,13 @@ class ParkingSpotFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => 1,
+            'user_id' => random_int(2, 20),
             'city' => $this->faker->randomElement(['Thessaloniki', 'Athina', 'Lamia', 'Volos']),
             'address' => $this->faker->address(),
             'title' => $this->faker->text(20),
             'description' => $this->faker->text(128),
             'vehicle_type' =>  $this->faker->randomElement(['motorbike', 'car', 'suv', 'truck']),
-            'price' => random_int(1, 99),
+            'price' => random_int(1, 30),
 
 
         ];

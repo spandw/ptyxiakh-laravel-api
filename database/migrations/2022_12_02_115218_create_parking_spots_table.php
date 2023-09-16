@@ -21,7 +21,6 @@ class CreateParkingSpotsTable extends Migration
             $table->string('address');
             $table->string('title');
             $table->string('description');
-            $table->integer('price');
             $table->enum('vehicle_type', ['motorbike', 'car', 'suv', 'truck']);
             $table->timestamps();
         });

@@ -17,11 +17,23 @@ class Reservation extends Model
         "end_date"
     ];
 
+
     protected $casts = [
         "start_date" =>  'datetime',
         "end_date" =>  'datetime'
 
     ];
+
+    public function scopeCheckDates($query, $check_start_date, $check_end_date)
+    {
+        if (empty($check_end_date)) {
+            return $query->where('start_date', '<=', $check_start_date)
+                ->where('end_date', '>=', $check_start_date);
+        } else {
+            return $query->whereBetween('start_date', [$check_start_date, $check_end_date])
+                ->orWhereBetween('end_date', [$check_start_date, $check_end_date]);
+        }
+    }
 
     public function user()
     {

@@ -30,16 +30,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
 
-    Route::post('/reservation', [ApiReservationsController::class, 'checkAvailabilityAndMakeReservation']);
+    Route::get('/check', [ApiReservationsController::class, 'checkAvailability']);
+    Route::get('/check/{id}', [ApiReservationsController::class, 'getSpotReservationsDates']);
+
     Route::post('/create-spot', [ApiParkingController::class, 'store']);
     Route::post('/update-spot/{id}', [ApiParkingController::class, 'update']);
     Route::delete('/delete-spot/{id}', [ApiParkingController::class, 'destroy']);
     Route::get('/cities', [ApiParkingController::class, 'getDistinctCities']);
-    Route::get('/parking-spots', [ApiParkingController::class, 'getAllParkingSpots']);
+    Route::get('/parking-spots', [ApiParkingController::class, 'getFilteredParkingSpots']);
     Route::get('/parking-spots/{id}', [ApiUserController::class, 'getUserParkingSpots']);
+    Route::get('/parking-spot/{id}', [ApiParkingController::class, 'getParkingSpotById']);
 
     Route::get('/user/{id}', [ApiUserController::class, 'getUserById']);
     Route::get('/users', [ApiUserController::class, 'getAllUsers']);
+    Route::put('/edit-user', [ApiUserController::class, 'update']);
 
 
     Route::get('/user', [ApiLoginController::class, 'getCurrentUser']);

@@ -15,9 +15,9 @@ class ReservationFactory extends Factory
     {
         return [
             'user_id' => 1,
-            'parking_spot_id' => random_int(1, 10),
-            'start_date' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
-            'end_date' => $this->faker->dateTimeBetween('+2 weeks', '+3 weeks')
+            'parking_spot_id' => random_int(2,20),
+            'start_date' => $this->faker->dateTimeBetween('now', '+1 week'),
+            'end_date' => $this->faker->dateTimeBetween('+1 week', '+3 weeks')
         ];
     }
 }

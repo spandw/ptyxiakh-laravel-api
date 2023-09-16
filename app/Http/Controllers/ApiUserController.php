@@ -19,6 +19,30 @@ class ApiUserController extends Controller
     //         'user' => User::findOrFail($id)
     //     ]);
     // }
+    public function update(Request $request)
+    {
+        $user_id = auth('sanctum')->user()->id;
+
+        $data = $request->validate([
+            'username' => ['required', 'string'],
+            'name' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email', 'string'],
+        ]);
+
+        $user = User::find($user_id);
+        $user->name = $data['name'];
+        $user->last_name = $data['last_name'];
+        $user->username = $data['username'];
+        $user->email = $data['email'];
+        $user->update();
+
+        return response()->json([
+            'success' => true,
+            'user' => $user,
+            //'token' => $token
+        ], 200);
+    }
     public function getAllUsers()
     {
         $users = User::all();

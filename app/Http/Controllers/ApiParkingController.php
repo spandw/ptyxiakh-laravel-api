@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ParkingSpot;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 
 class ApiParkingController extends Controller
 {
@@ -34,9 +34,8 @@ class ApiParkingController extends Controller
             'address' => ['required', 'string'],
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
             'type' => 'in:motorbike,car,suv,truck',
-
+            'photo' => ['string'],
         ]);
 
         $parkingSpot = ParkingSpot::create([
@@ -45,11 +44,18 @@ class ApiParkingController extends Controller
             'address' => $data['address'],
             'title' => $data['title'],
             'description' => $data['description'],
-            'price' => $data['price'],
             'vehicle_type' => $data['type'],
             'user_id' => $request->user()->id
         ]);
         //$token = $user->createToken('main')->plainTextToken;
+        $base64_image = $data['photo'];
+
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64_image)) {
+            $data = substr($base64_image, strpos($base64_image, ',') + 1);
+
+            $data = base64_decode($data);
+            Storage::disk('public')->put("/parking-spots/$parkingSpot->id.png", $data);
+        }
 
         return response()->json([
             'message' => 'Created Spot succefully',
@@ -85,11 +91,11 @@ class ApiParkingController extends Controller
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'vehicle_type' => 'in:motorbike,car,suv,truck',
+            'photo' => ['string'],
 
         ]);
 
         $parkingSpot = ParkingSpot::find($id);
-
         if (!$parkingSpot) {
             return response()->json([
                 'message' => 'This Parking Spot Doesn\'t exist'
@@ -101,6 +107,15 @@ class ApiParkingController extends Controller
         $parkingSpot->title = $data['title'];
         $parkingSpot->description = $data['description'];
         $parkingSpot->vehicle_type = $data['vehicle_type'];
+
+        $base64_image = $data['photo'];
+
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64_image)) {
+            $data = substr($base64_image, strpos($base64_image, ',') + 1);
+
+            $data = base64_decode($data);
+            Storage::disk('public')->put("/parking-spots/$parkingSpot->id.png", $data);
+        }
         $parkingSpot->save();
 
         return response()->json([
@@ -124,15 +139,38 @@ class ApiParkingController extends Controller
         ], 200);
     }
 
-    public function getAllParkingSpots()
+    public function getFilteredParkingSpots(Request $request)
     {
-        $parkingSpots = ParkingSpot::all();
+        // $parkingSpots = ParkingSpot::all();
+        $query = ParkingSpot::query();
+
+
+        // Apply filters based on request parameters
+        if ($request->has('vehicle_type')) {
+            $query->where('vehicle_type', $request->input('vehicle_type'));
+        }
+        if ($request->has('city')) {
+            $query->where('city', $request->input('city'));
+        }
+
+        $parkingSpots = $query->get();
+        return response()->json($parkingSpots);
         if (!$parkingSpots) {
             return response()->json([
                 'message' => 'There are no parking spots yet'
             ], 404);
         }
         return response()->json($parkingSpots, 200);
+    }
+    public function getParkingSpotById($id)
+    {
+        $parkingSpot = ParkingSpot::find($id);
+        if (!$parkingSpot) {
+            return response()->json([
+                'message' => 'There are no parking spots yet'
+            ], 404);
+        }
+        return response()->json($parkingSpot, 200);
     }
 
     public function getDistinctCities()

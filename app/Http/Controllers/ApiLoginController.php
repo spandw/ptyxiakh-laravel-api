@@ -17,7 +17,7 @@ class ApiLoginController extends Controller
         $data = $request->validate([
             'username' => ['required', 'string'],
             'name' => ['required', 'string'],
-            'lastName' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
             'email' => ['required', 'email', 'string'],
             'password' => [
                 'required',
@@ -29,8 +29,9 @@ class ApiLoginController extends Controller
         $user = User::create([
             'username' => $data['username'],
             'name' => $data['name'],
-            'last_name' => $data['lastName'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
+            'credits' => 5,
             'password' => bcrypt($data['password'])
         ]);
         $token = $user->createToken('myapptoken')->plainTextToken;
