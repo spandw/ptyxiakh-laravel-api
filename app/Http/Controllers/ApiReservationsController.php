@@ -85,7 +85,7 @@ class ApiReservationsController extends Controller
         $user_id = auth('sanctum')->user()->id;
         $reservee = User::findOrFail($user_id);
 
-        $isNotAvailable = Reservation::checkDates($check_start_date, $check_end_date)->where('parking_spot_id', $request->id)->exists();
+        $isNotAvailable = Reservation::checkDates($check_start_date, $check_end_date)->where('parking_spot_id', $request->parking_spot_id)->exists();
         if ($isNotAvailable) {
             return response()->json([
                 'message' => "There is already a reservation on those dates."
@@ -96,7 +96,8 @@ class ApiReservationsController extends Controller
         if ($reserveeCredits < $daysDifference) {
             return response()->json([
                 'message' => "You have insufficient amount of credits",
-                'Your Credits' => $reserveeCredits
+                'Your Credits' => $reserveeCredits,
+                'days Difference' => $daysDifference
             ], 422);
         }
         $parkingSpot = ParkingSpot::find($request->parking_spot_id);
@@ -111,7 +112,7 @@ class ApiReservationsController extends Controller
 
         $reservation = Reservation::create([
             'user_id' => $user_id,
-            'parking_spot_id' => $request->spotId,
+            'parking_spot_id' => $request->parking_spot_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
