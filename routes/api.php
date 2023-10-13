@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user/{id}', [ApiUserController::class, 'getUserById']);
     Route::get('/users', [ApiUserController::class, 'getAllUsers']);
     Route::put('/edit-user', [ApiUserController::class, 'update']);
+    Route::get('/user-reservations', [ApiUserController::class, 'getUserReservations']);
 
 
     Route::get('/user', [ApiLoginController::class, 'getCurrentUser']);

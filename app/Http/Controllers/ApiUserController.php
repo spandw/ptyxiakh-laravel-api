@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Http\Middleware\AuthenticationCheck;
 use App\Models\ParkingSpot;
+use App\Models\Reservation;
 
 class ApiUserController extends Controller
 {
@@ -76,5 +77,17 @@ class ApiUserController extends Controller
             ], 404);
         }
         return response()->json($userParkingSpots, 200);
+    }
+
+    public function getUserReservations()
+    {
+        $user_id = auth('sanctum')->user()->id;
+        $userReservations = Reservation::where('user_id', $user_id)->get();
+        if ($userReservations->isEmpty()) {
+            return response()->json([
+                'message' => 'There are no reservations of this user'
+            ], 422);
+        }
+        return response()->json($userReservations, 200);
     }
 }
