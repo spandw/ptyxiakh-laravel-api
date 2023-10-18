@@ -20,11 +20,11 @@ class ApiReservationsController extends Controller
             ->select('start_date', 'end_date')
             ->get();
 
-        if (sizeof($reservations) === 0) {
-            return response()->json([
-                'message' => "There are no reservations for this spot."
-            ], 404);
-        };
+        // if (sizeof($reservations) === 0) {
+        //     return response()->json([
+        //         'message' => "There are no reservations for this spot."
+        //     ], 404);
+        // };
         $formattedDates = $this->formatDateRanges($reservations);
 
         return response()->json($formattedDates);
@@ -120,6 +120,16 @@ class ApiReservationsController extends Controller
         return response()->json([
             'message' => "Reservation created successfully",
             'reservation' => $reservation,
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+        $reservation = Reservation::find($id);
+        $reservation->delete();
+
+        return response()->json([
+            'message' => "Reservation was cancelled!"
         ], 200);
     }
 }

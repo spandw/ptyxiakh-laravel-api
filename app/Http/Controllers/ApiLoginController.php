@@ -31,12 +31,13 @@ class ApiLoginController extends Controller
             'name' => $data['name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'credits' => 5,
+            'credits' => 7,
             'password' => bcrypt($data['password'])
         ]);
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         return response()->json([
+            'message' => 'User registered successfully.',
             'success' => true,
             'user' => $user,
             'token' => $token
@@ -75,8 +76,9 @@ class ApiLoginController extends Controller
         //uth::logout();
         //$request->session()->invalidate();
         return response()->json([
+            'message' => 'Logged out.',
             'success' => true,
-        ]);
+        ],200);
     }
 
     public function getCurrentUser()
