@@ -21,14 +21,7 @@ use App\Http\Controllers\ApiReservationsController;
 Route::post('/register', [ApiLoginController::class, 'register']);
 Route::post('/login', [ApiLoginController::class, 'authenticate']);
 
-// Route::get('/reservations', [ApiReservationsController::class, 'index']);
-
-
-
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
-
-
 
     Route::get('/check', [ApiReservationsController::class, 'checkAvailability']);
     Route::get('/check/{id}', [ApiReservationsController::class, 'getSpotReservationsDates']);

@@ -3,30 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\ParkingSpot;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 class ApiParkingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -47,7 +30,7 @@ class ApiParkingController extends Controller
             'vehicle_type' => $data['type'],
             'user_id' => $request->user()->id
         ]);
-        //$token = $user->createToken('main')->plainTextToken;
+
         $base64_image = $data['photo'];
 
         if (preg_match('/^data:image\/(\w+);base64,/', $base64_image)) {
@@ -64,24 +47,6 @@ class ApiParkingController extends Controller
         ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
 
@@ -122,29 +87,25 @@ class ApiParkingController extends Controller
             'parking_spot' => $parkingSpot
         ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
+        $cannotDelete = Reservation::where('parking_spot_id', $id)->exists();
+        if($cannotDelete){
+            return response()->json([
+                'message' => "Cannot delete parking spot beacause it has active reservations."
+            ], 422);
+        }
         $parkingSpot = ParkingSpot::find($id);
         $parkingSpot->delete();
 
         return response()->json([
-            'message' => "Parking Spot Was Deleted Successsfully!!"
+            'message' => "Parking spot deleted successfully!"
         ], 200);
     }
 
     public function getFilteredParkingSpots(Request $request)
     {
-        // $parkingSpots = ParkingSpot::all();
         $query = ParkingSpot::query();
-
-
         // Apply filters based on request parameters
         if ($request->has('vehicle_type')) {
             $query->where('vehicle_type', $request->input('vehicle_type'));
@@ -162,6 +123,7 @@ class ApiParkingController extends Controller
         }
         return response()->json($parkingSpots, 200);
     }
+
     public function getParkingSpotById($id)
     {
         $parkingSpot = ParkingSpot::find($id);

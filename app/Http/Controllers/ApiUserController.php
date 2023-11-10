@@ -15,12 +15,6 @@ use Carbon\Carbon;
 class ApiUserController extends Controller
 {
 
-    // public function show($id)
-    // {
-    //     return view('user.profile', [
-    //         'user' => User::findOrFail($id)
-    //     ]);
-    // }
     public function update(Request $request)
     {
         $user_id = auth('sanctum')->user()->id;
@@ -46,6 +40,7 @@ class ApiUserController extends Controller
             //'token' => $token
         ], 200);
     }
+
     public function getAllUsers()
     {
         $users = User::all();
@@ -56,6 +51,7 @@ class ApiUserController extends Controller
         }
         return response()->json($users, 200);
     }
+
     public function getUserById($id)
     {
 
@@ -84,12 +80,10 @@ class ApiUserController extends Controller
     public function getUserReservations()
     {
         $user_id = auth('sanctum')->user()->id;
-        $userReservations = Reservation::where('user_id', $user_id)->with('parkingspot')->get();
-        // if ($userReservations->isEmpty()) {
-        //     return response()->json([
-        //         'message' => 'There are no reservations of this user'
-        //     ], 422);
-        // }
+        $userReservations = Reservation::where('user_id', $user_id)
+            ->with('parkingspot')
+            ->get();
+
         return response()->json($userReservations, 200);
     }
 }

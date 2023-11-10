@@ -27,6 +27,7 @@ class Reservation extends Model
     public function scopeCheckDates($query, $check_start_date, $check_end_date)
     {
         if (empty($check_end_date)) {
+            
             return $query->where('start_date', '<=', $check_start_date)
                 ->where('end_date', '>=', $check_start_date);
         } else {

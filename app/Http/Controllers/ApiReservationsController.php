@@ -14,24 +14,14 @@ class ApiReservationsController extends Controller
 
     public function getSpotReservationsDates($id)
     {
-        // Apply filters based on request parameters
         $reservations = Reservation::query()
             ->where('parking_spot_id', $id)
             ->select('start_date', 'end_date')
             ->get();
 
-        // if (sizeof($reservations) === 0) {
-        //     return response()->json([
-        //         'message' => "There are no reservations for this spot."
-        //     ], 404);
-        // };
         $formattedDates = $this->formatDateRanges($reservations);
 
         return response()->json($formattedDates);
-        // return response()->json([
-        //     'message' => "Reservetion on this spot",
-        //     'reservations' => $reservations,
-        // ], 200);
     }
 
     private function formatDateRanges($dateRanges)
@@ -76,16 +66,27 @@ class ApiReservationsController extends Controller
         $check_start_date = $request->start_date;
         $check_end_date = $request->end_date;
 
+        if (empty($check_end_date)) {
+
+            $check_start_date = $request->date;
+            $check_end_date = $request->date;
+        }
+
         //dates se int
         $int_start_date = Carbon::parse($check_start_date);
         $int_end_date = Carbon::parse($check_end_date);
 
+
         $daysDifference = $int_end_date->diffInDays($int_start_date);
+        if($int_end_date == $int_start_date){
+            $daysDifference = 1;
+        }
 
         $user_id = auth('sanctum')->user()->id;
         $reservee = User::findOrFail($user_id);
 
-        $isNotAvailable = Reservation::checkDates($check_start_date, $check_end_date)->where('parking_spot_id', $request->parking_spot_id)->exists();
+        $isNotAvailable = Reservation::checkDates($check_start_date, $check_end_date)
+            ->where('parking_spot_id', $request->parking_spot_id)->exists();
         if ($isNotAvailable) {
             return response()->json([
                 'message' => "There is already a reservation on those dates."
@@ -113,8 +114,8 @@ class ApiReservationsController extends Controller
         $reservation = Reservation::create([
             'user_id' => $user_id,
             'parking_spot_id' => $request->parking_spot_id,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'start_date' => $check_start_date,
+            'end_date' => $check_end_date,
         ]);
 
         return response()->json([

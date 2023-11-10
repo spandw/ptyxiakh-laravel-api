@@ -22,7 +22,7 @@ class ApiLoginController extends Controller
             'password' => [
                 'required',
                 'confirmed',
-                //Password::min(8)->mixedCase()->numbers()->symbols()
+                Password::min(8)->mixedCase()->numbers()->symbols()
             ]
         ]);
 
@@ -50,10 +50,8 @@ class ApiLoginController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
         /// Check email
         $user = User::where('email', $credentials['email'])->first();
-
         // Check password
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json([
@@ -61,7 +59,6 @@ class ApiLoginController extends Controller
                 'message' => 'Bad creds'
             ], 401);
         }
-
         $token = $user->createToken('myapptoken')->plainTextToken;
         return response()->json([
             'success' => true,
